@@ -1,0 +1,40 @@
+Splneno:
+    Zivoty (float), Penize (int), Inventar,
+    Klice - winning condition
+    uporoznit na maximální hodnoty životu
+    nejak zapojit zbran, nevim kdy pujde koupit
+    Predelat inventar na vstup cislem!!!
+
+
+
+
+
+
+
+Obchod: do pribehu prubezne (mozna treba kazde rano)
+    Oblozena bageta
+    Zbran
+    Pivo
+
+
+
+
+mozna zakomponovat cas? i kdyz nevim jak by hral roli, mozna moc komplikovane, asi spis jenom den
+jak by fungovalo slacikovo pivo s casem? nefungovalo :/
+
+
+Pribeh:
+        prvni den - Na vylet do usti nad labem jedes ty, tomkova, burgetova a slacik, protoze vsichni ostatni zustali doma
+        prvni noc - zidasek 
+druhy den
+    rano - tomkova posle pro snidani
+        nesplneho -Zivoty
+        plneno - daruje ti sve srdce
+    zustavas cely den na hotelu, tomkova ti dava ukoly, 
+druha noc - znova zidasek, ale jiny problem
+treti den - chemicka, neco alkohol a slacik, vymyslet quest a item
+treti noc - znova zidasek, jiny problem
+ctvrty den - mesto, ukradnute Klice, den burgetove, vymyslet quest a item
+ctvrta noc - znova zidasek, jiny problem, moznost postrelit
+paty den - konec, klice jako win condition
+
