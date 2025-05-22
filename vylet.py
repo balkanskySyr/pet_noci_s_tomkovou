@@ -341,6 +341,7 @@ while hra:
             " žádná hitparáda to ale nebude. Poslala tě pro snídani z místní benzínky, kterou\n" \
             "ku podivu ještě nerozkradli.")
             obchod()
+            print("slacikuv test")
 
            
     else:
