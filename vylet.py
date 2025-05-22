@@ -8,7 +8,7 @@ zivoty = 10.0
 maximalni_zivoty = 10.0
 penize = 200
 minimalni_penize = 0
-inventar = {"svačina": 1, "klíče": 1}
+inventar = {"svačina": 1}
 cas = datetime.datetime.strptime("08:00", "%H:%M").time()
 scena = 0
 hra = True
@@ -19,7 +19,6 @@ cena_premium_toasty = 80
 cena_zbran = 500
 
 # definice vsech potrebnych itemu
-klice = "klíče"
 krabicove_vino = "krabicové víno"
 svacina = "svačina"
 bonbony = "bonbony"
@@ -141,9 +140,7 @@ print("sekce - životy, peníze a inventář. Pamatuj, že 10 je ")
 print("maximální hodnota tvých životů a jakékoliv životy navíc")
 print("se smažou. S některými předměty v tvém inventáři můžeš reagovat,")
 print("stále ale ovšem jen mezi scénami. Na začátek jsi od maminky")
-print("dostal svačinu, která ti přidá 2.5 životů a klíče. S němi")
-print("nijak interagovat nemůžeš, ale nesmíš je ztratit, jinak se ")
-print("na konci příběhu budeš těžko dostávat domů. Běhěm hry se ti")
+print("dostal svačinu, která ti přidá 2.5 životů. Běhěm hry se ti")
 print("také bude nepravidelně zobrazovat obchod, ve kterém se převážně")
 print("kvůli Fialovi postupně zvyšují ceny.")
 print("                    HODNĚ ŠTĚSTÍ")
@@ -189,9 +186,6 @@ while hra:
                                 print(f"Úspěšně jste snědli svoji svačinu. Nyní máte {zivoty} životů.")
                             elif rozhodnuti_svacina == "n":
                                 print(f"Rozhodli jste nesníst svoji svačinu a ponechat si svých {zivoty} životů.")
-                        elif zvoleny_item == "klíče":
-                            print("-----------------------------------------")
-                            print("S klíčemi nelze interagovat. Budou se ale určitě hodit na cestu domů, doporučuji neztratit.")
                         elif zvoleny_item == "krabicové víno":
                             print("Chcete zkonzumovat Slačíkovo víno a navrátit se o jednu scénu zpět? y/n")
                             print("-----------------------------------------")
@@ -341,7 +335,28 @@ while hra:
             " žádná hitparáda to ale nebude. Poslala tě pro snídani z místní benzínky, kterou\n" \
             "ku podivu ještě nerozkradli.")
             obchod()
-            print("slacikuv test")
+            scena += 1
+        elif scena == 4:
+            if svacina or premium_toasty in inventar:
+                if premium_toasty in inventar:
+                    zmen_item(premium_toasty, -1)
+                    print("Výborně. Tomková byla nadšená z toastů a jako odměnu ti ještě něco přispěla zpátky.")
+                    zmen_penize(cena_premium_toasty + 30)
+                    zmen_zivoty(0,7)
+                else:
+                    print("To bylo těsné, ještě, že jsi pořád měl tu svačinu z Prahy a mohl jsi ji ji podstrčit.\n" \
+                    "Možná by přece jenom bylo chytřejší něco koupit.")
+                    zmen_item(svacina, -1)
+            else:
+                print("Proč jsi ji kurva něco nekoupil? Teď bude sakra těžký s ní přežít. Ještě jsi ji musel uplatit\n," \
+                "aby tě přímo nezabila.")
+                zmen_zivoty(-3)
+                zmen_penize(cena_premium_toasty -20)
+            scena += 1
+        elif scena == 5:
+            print("Odpoledne se situace moc neposonula. Pořád a pořád pršelo, Slačík dává už šestou zelenou\n" \
+            "a Tomková zase začala vymýšlet.")
+            
 
            
     else:
