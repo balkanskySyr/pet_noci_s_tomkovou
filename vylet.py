@@ -10,8 +10,9 @@ penize = 200
 minimalni_penize = 0
 inventar = {"svačina": 1}
 cas = datetime.datetime.strptime("08:00", "%H:%M").time()
-scena = 0
+scena = 5
 hra = True
+tomkova_body = 0
 #pocatecni hodnoty pro obchod
 pocet_bonbonu = 0
 cena_bonbony = 60
@@ -24,6 +25,7 @@ svacina = "svačina"
 bonbony = "bonbony"
 premium_toasty = "premium toasty"
 zbran = "zbraň"
+srdce_tomkove = "srdce paní profesorky"
 
 # změna životů, aby nepřesáhly maximální hodnotu
 def zmen_zivoty(hodnota_zivotu):
@@ -186,17 +188,7 @@ while hra:
                             elif rozhodnuti_svacina == "n":
                                 print(f"Rozhodli jste nesníst svoji svačinu a ponechat si svých {zivoty} životů.")
                         elif zvoleny_item == "krabicové víno":
-                            print("Chcete zkonzumovat Slačíkovo víno a navrátit se o jednu scénu zpět? y/n")
-                            print("-----------------------------------------")
-                            rozhodnuti_vino = input(">")
-                            print("-----------------------------------------")
-                            if rozhodnuti_vino == "y":
-                                zmen_item(krabicove_vino, -1)
-                                print("Úspěšně jsi vypil Slačíkovo lahodné krabicové víno.\n" \
-                                "Až budeš pokračovat, přehraje se předchozí scéna znovu.")
-                                scena -= 1
-                            if rozhodnuti_vino == "n":
-                                print("Rozhodl ses nevypít Slačíkovo víno. Stejně bůhví, co v tom má.")
+                            print("S vínem prozatím nelze interagovat. Jeho čas ovšem přijde.")
                 else:
                     print("-----------------------------------------")
                     print("Daný předmět se ve vašem inventáři nenachází.")
@@ -221,11 +213,11 @@ while hra:
             print("-----------------------------------------")
             if rozhodnuti_0 == "1":
                 print("Slačík s tebou soucítí a proto ti předal jeho cenné krabicové\n"
-                "víno, má ho totiž ještě do zásoby spoustu. Tímto vínem se dokážeš\n"
-                "opít tak efektivně, že při jeho konzumaci se příběh posune přesně o\n"
-                "jednu scénu zpět. Tip: touto mechanikou můžeš jednou za hru získat\n"
-                "libovolný předmět dvakrát. Taky ti dal dvacku ze své peněženky.\n")
+                "víno poznání, má ho totiž ještě do zásoby spoustu. Tímto vínem se dokážeš\n"
+                "opít tak efektivně, že když se tě někdo bude dožadovat nějaké znalostní otázky,\n"
+                " budeš vždycky vědět správnou odpověď. Taky ti dal dvacku ze své peněženky.\n")
                 zmen_item(krabicove_vino, +1)
+                zmen_penize(20)
             elif rozhodnuti_0 == "2":
                 if "svačina" in inventar:
                    print("Co sis jako kurva myslel? Máš štěstí, že jsi u sebe pořád měl\n" \
@@ -353,7 +345,60 @@ while hra:
             scena += 1
         elif scena == 5:
             print("Odpoledne se situace moc neposunula. Pořád a pořád pršelo, Slačík dává už šestou zelenou\n" \
-            "a Tomková zase začala vymýšlet.")
+            "a Tomková zase začala vymýšlet. Bohužel má ale připravenou závěrečný přepadový test jen pro tercii,\n" \
+            "jelikož s vaší třídou ji to prostě nebaví a tak budeš muset vymyslet krátký test. První si ale\n" \
+            "Tomková prověří tvoje hluboké znalosti.")
+            print("-----------------------------------------")
+            print("Pověz mi, v jakém roce zavedla Marie Terezie povinnou školní docházku?")
+            print("1. - 1774 ")
+            print("2. - 1775")
+            print("3. - 1780")
+            print("-----------------------------------------")
+            tomkova_terezie = input(">")
+            print("-----------------------------------------")
+            if tomkova_terezie == ("1"):
+                tomkova_body +=1
+            print("-----------------------------------------")
+            print("Pověz mi, v jakém roce byla zrušena nevolnictví?")
+            print("1. - 1786 ")
+            print("2. - 1781")
+            print("3. - 1780")
+            print("-----------------------------------------")
+            tomkova_nevolnictvi = input(">")
+            print("-----------------------------------------")
+            if tomkova_nevolnictvi == ("2"):
+                tomkova_body +=1
+            print("Pověz mi, v jakém roce zemřela Marie Terezie?")
+            print("1. - 1780 ")
+            print("2. - 1787")
+            print("3. - 1786")
+            print("-----------------------------------------")
+            tomkova_terezie_zemrela = input(">")
+            print("-----------------------------------------")
+            if tomkova_terezie_zemrela == ("1"):
+                tomkova_body +=1
+            if tomkova_body == 0:
+                print("Tomková byla zklamaná, že jsi se vůbec nepřipravil. Přicházíš o 4 životy.")
+                zivoty -= 4
+            elif tomkova_body == 1:
+                print("Tomková byla zklamaná a v Praze tě hned pošle do zadní lavice. Přicházíš o 2 životy.")
+                zivoty -= 2
+            elif tomkova_body == 2:
+                print("Solidní výkon, Tomková byla spokojená a nechala tě vytvořit test pro terciány.\
+                      Ten jsi jim následně přeprodal a vydělal jsi si 135 peněz.")
+                zmen_penize(135)
+            elif tomkova_body ==3:
+                print("Tomková je naprosto unešená. Bohužel jen obrazně. Nechala tě vytvořit\n" \
+                "test pro terciány a jako pochvalu za tento úchvatný výkon ti dala dar. Nedala ti\n" \
+                "nic jiného, než její srdce, které už nechtěla mít na správném místě. Toto srdce ti slouží\n" \
+                "jako záložní život, který, pokud dojde na nejhorší a měl by jsi umřít tě zachrání a tvoje\n" \
+                "životy se místo hodnoty 0 zastaví na hodnotě 0.5.")
+                zmen_item(srdce_tomkove, +1)
+
+
+
+
+
 
 
     else:
