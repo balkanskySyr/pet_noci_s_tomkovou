@@ -13,6 +13,7 @@ cas = datetime.datetime.strptime("08:00", "%H:%M").time()
 scena = 5
 hra = True
 tomkova_body = 0
+jirasek_zije = True
 #pocatecni hodnoty pro obchod
 pocet_bonbonu = 0
 cena_bonbony = 60
@@ -31,6 +32,15 @@ srdce_tomkove = "srdce paní profesorky"
 def zmen_zivoty(hodnota_zivotu):
     global zivoty, maximalni_zivoty
     zivoty += hodnota_zivotu
+    if zivoty <= 0:
+        if srdce_tomkove in inventar:
+            print("Těsně jsi unikl smrti. Naštěstí tě zachránilo srdce Tomkové, stejně jako Tomková\n" \
+            "zachraňuje každou středu svou dvouhodinovkou. Nyní máš 0.5 životů.")
+            zmen_item(srdce_tomkove, -1)
+            zivoty = 0.5
+        else:
+            konec_hry
+            
     zivoty = min(zivoty, maximalni_zivoty)
 
 # změna peněz, aby nepřesáhly minimální hodnotu
@@ -121,6 +131,11 @@ def obchod():
             break
         else:
             print("Neplatný vstup.")
+
+# dialog s koncem hry, druh konce asi podle boolean
+def konec_hry():
+    print("teď to fakt psát nebudu")
+    hra = False
 
 
 
@@ -394,6 +409,15 @@ while hra:
                 "jako záložní život, který, pokud dojde na nejhorší a měl by jsi umřít tě zachrání a tvoje\n" \
                 "životy se místo hodnoty 0 zastaví na hodnotě 0.5.")
                 zmen_item(srdce_tomkove, +1)
+            scena += 1
+        elif scena == 6:
+            print("Aktivita kvízu zabrala celé odpoledne a tak už jsi se neodvážel nic udělat. Pokojně\n" \
+            "usínáš a doufáš, že přes noc přestane pršet, protože další takto intimní den s Tomkovou\n" \
+            "by jsi nepřežil. ")
+            scena += 1
+        elif scena == 7:
+            
+
 
 
 

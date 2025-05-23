@@ -19,8 +19,9 @@ Obchod: do pribehu prubezne (mozna treba kazde rano)
 
 
 
-mozna zakomponovat cas? i kdyz nevim jak by hral roli, mozna moc komplikovane, asi spis jenom den
-jak by fungovalo slacikovo pivo s casem? nefungovalo :/
+mozna zakomponovat cas? Treba otviraci doby
+    nebo ze akce budou nejakej cas trvat, ze treba jen abys nakoupil 
+    tak to bude trvat 20 minut treba, takze je omezenej pocet dobrovolnejch akci za den treba
 
 
 Pribeh:
