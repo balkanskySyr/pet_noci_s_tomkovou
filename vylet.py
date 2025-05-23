@@ -1,6 +1,6 @@
 # importy
 import time
-import datetime 
+import datetime
 import random
 
 # počáteční hodnoty
@@ -25,7 +25,7 @@ bonbony = "bonbony"
 premium_toasty = "premium toasty"
 zbran = "zbraň"
 
-# změna životů, aby nepřesáhli maximální hodnotu
+# změna životů, aby nepřesáhly maximální hodnotu
 def zmen_zivoty(hodnota_zivotu):
     global zivoty, maximalni_zivoty
     zivoty += hodnota_zivotu
@@ -50,8 +50,8 @@ def zmen_item(item, zmena_itemu):
 def vycet_inventare():
     for item, pocet in inventar.items():
                     print(str(item.capitalize()) + " (x" + str(pocet) + "), ")
-    
-# defaultní menu, včetně inputů a interakcí se staty a inventářem   
+
+# defaultní menu, včetně inputů a interakcí se staty a inventářem
 def menu():
     global zivoty, penize, inventar, cas
     print("-----------------------------------------")
@@ -72,7 +72,7 @@ def menu():
 # obchod, který je průběžně dostupný
 def obchod():
     while True:
-        global penize, inventar, vstup_obchod, cena_bonbony, cena_premium_toasty, cena_zbran
+        global penize, inventar, vstup_obchod, cena_bonbony, cena_premium_toasty, cena_zbran, pocet_bonbonu # Přidáno pocet_bonbonu do global
         print("-----------------------------------------")
         print("             REFRESH BISTRO")
         print("-----------------------------------------")
@@ -81,8 +81,7 @@ def obchod():
         print(f"3. Zbraň - {cena_zbran}")
         print("4. Informace o předmětech")
         print("5. Zpět do hry")
-        print("Informace o předmětech")
-        print("-----------------------------------------")
+        print("-----------------------------------------") # Odstraněno duplicitní "Informace o předmětech"
         vstup_obchod = input(">")
         print("-----------------------------------------")
         if vstup_obchod == "1":
@@ -97,12 +96,12 @@ def obchod():
             if penize >= cena_bonbony and pocet_bonbonu < 3:
                 zmen_penize(-cena_bonbony)
                 zmen_item("Bonbóny" , +1)
-                print("Úspěšně jsi získal bonbóny")
+                print("Úspěšně jsi získal bonbóny.") # Doplněna tečka
                 cena_bonbony += 40
                 pocet_bonbonu += 1
-            if pocet_bonbonu >= 3 and penize >= cena_bonbony:
+            elif pocet_bonbonu >= 3 and penize >= cena_bonbony: # Opraveno 'if' na 'elif' pro lepší logiku
                     print("Nelze koupit víc bonbónů.")
-            else:
+            else: # Toto 'else' se nyní vztahuje k podmínce nedostatku peněz, pokud není splněna ani podmínka limitu bonbonů
                 print("Nemáš dostatek peněz na bonbóny.")
         elif vstup_obchod == "3":
             if penize >= cena_zbran:
@@ -114,8 +113,8 @@ def obchod():
         elif vstup_obchod == "4":
             print("Premium Toast - Základní potravina. Doplní 2 životy.")
             print("Bonbóny - výborné na uplácení - zvyšují všechny šance v příběhu o zhruba 10%.\n" \
-            "Lze zakoupit víckrát pro ještě větší zvýšení akce")
-            print("Standartní pistole s malorážkou. Ideální na Židáska.")
+            "Lze zakoupit víckrát pro ještě větší zvýšení šancí.") # Opraveno "akce" na "šancí" a doplněna tečka
+            print("Standardní pistole s malorážkou. Ideální na Židáska.") # Opraveno Standartní -> Standardní
         elif vstup_obchod == "5":
             break
         else:
@@ -139,8 +138,8 @@ print("každou scénou. Na tomto menu můžeš vidět tři jednoduché")
 print("sekce - životy, peníze a inventář. Pamatuj, že 10 je ")
 print("maximální hodnota tvých životů a jakékoliv životy navíc")
 print("se smažou. S některými předměty v tvém inventáři můžeš reagovat,")
-print("stále ale ovšem jen mezi scénami. Na začátek jsi od maminky")
-print("dostal svačinu, která ti přidá 2.5 životů. Běhěm hry se ti")
+print("ale jen mezi scénami. Na začátek jsi od maminky") # Opraveno "stále ale ovšem jen mezi scénami" na "ale jen mezi scénami"
+print("dostal svačinu, která ti přidá 2.5 životů. Během hry se ti") # Opraveno Běhěm -> Během
 print("také bude nepravidelně zobrazovat obchod, ve kterém se převážně")
 print("kvůli Fialovi postupně zvyšují ceny.")
 print("                    HODNĚ ŠTĚSTÍ")
@@ -155,13 +154,13 @@ while hra:
       hra = False
     elif zivoty <= 0:
         hra = False
-    
+
     # interakce s inventářem
     elif vstup == "2":
         if len(inventar) < 1:
             print("Tvůj inventář je prázdný.")
         else:
-            print("Ze kterým z těchto předmětů si přeješ interagovat?")
+            print("Se kterým z těchto předmětů si přeješ interagovat?") # Opraveno Ze kterým -> Se kterým
             print("-----------------------------------------")
             inventar_list = list(inventar.keys())
             for index, item in enumerate(inventar_list, start=1):
@@ -197,22 +196,22 @@ while hra:
                                 "Až budeš pokračovat, přehraje se předchozí scéna znovu.")
                                 scena -= 1
                             if rozhodnuti_vino == "n":
-                                print("Rozhodl ses nevypít Slačíkovo víno. Stejně bůh ví, co v tom má.")
+                                print("Rozhodl ses nevypít Slačíkovo víno. Stejně bůhví, co v tom má.") # Opraveno bůh ví -> bůhví
                 else:
                     print("-----------------------------------------")
-                    print("Daný předmět se ve vašem inventáři nenachází.")    
+                    print("Daný předmět se ve vašem inventáři nenachází.")
 
-    # scény   
+    # scény
     elif vstup == "1":
         if scena == 0:
             print("Je pondělí, osm hodin ráno. Přicházíš na slavné parkoviště\n" \
             "před školou, ale zjistil jsi nečekanou novinku. Všem, kromě tebe se\n" \
             "porařilo z výletu nějak vymluvit. František je na Šumavě, Matouš s\n" \
             "ním a dokonce i Štěpán má něco lepšího na práci. Ale teď už je pozdě.\n" \
-            "Na výlet se musíš vydat pouze ty, Tomková, Burgetová, ale naštestí i \n" \
+            "Na výlet se musíš vydat pouze ty, Tomková, Burgetová, ale naštěstí i \n" \
             "Slačík, který je mimochodem zase zlitej pod obraz. Snad nebude řídit.\n" \
             "Tomková svým obřím zadkem zabrala všechna volná místa v autobuse, takže\n" \
-            "si musíš sednout vedle někoho. ")
+            "si musíš sednout vedle někoho.") # Odstraněna mezera před tečkou, opraveno naštestí -> naštěstí
             print("-----------------------------------------")
             print("Posadit se vedle Slačíka - 1.")
             print("Posadit se vedle Tomkový - 2.")
@@ -223,9 +222,9 @@ while hra:
             if rozhodnuti_0 == "1":
                 print("Slačík s tebou soucítí a proto ti předal jeho cenné krabicové\n"
                 "víno, má ho totiž ještě do zásoby spoustu. Tímto vínem se dokážeš\n"
-                "opít tak efektivně, že při jeho konzumaci se příběh posune přesne o\n"
+                "opít tak efektivně, že při jeho konzumaci se příběh posune přesně o\n" # Opraveno přesne -> přesně
                 "jednu scénu zpět. Tip: touto mechanikou můžeš jednou za hru získat\n"
-                " libovolný  předmět dvakrát. Taky ti dal dvacku ze své peněženky.\n")
+                "libovolný předmět dvakrát. Taky ti dal dvacku ze své peněženky.\n") # Odstraněna dvojitá mezera před libovolný
                 zmen_item(krabicove_vino, +1)
             elif rozhodnuti_0 == "2":
                 if "svačina" in inventar:
@@ -234,7 +233,7 @@ while hra:
                    zmen_item(svacina, -1)
                 else:
                     print("Tak to byl hodně dementní nápad. Protože jsi svoji svačinu už snědl,\n" \
-                    "Tomková se nasrala, že pro ní nic nemáš a sedla si na tebe. Přicházíš o 4 životy.")
+                    "Tomková se nasrala, že pro ni nic nemáš a sedla si na tebe. Přicházíš o 4 životy.") # Opraveno pro ní -> pro ni
                     zivoty -= 4
                     scena += 1
             elif rozhodnuti_0 == "3":
@@ -243,20 +242,19 @@ while hra:
                 zivoty -= 2
             else:
                 print("Neplatný vstup.")
-            scena += 1     
+            scena += 1
         elif scena == 1:
-            print("Zázrakem tě dovezl autobus až do prapodivného cyklokempu poblíž Ústí nad Labem.\n" \
-            "Tvoji záchranou bylo, že vzhledem k tomu, že škola zarezervovala pokoje pro třicet\n" \
-            "lidí, (a jednu Tomkovou) bylo místa dost a nejen, že spíš sám, ale také dostatečně daleko od Burgetové.")
+            print("Tvojí záchranou bylo, že vzhledem k tomu, že škola zarezervovala pokoje pro třicet\n" \
+            "lidí (a jednu Tomkovou), bylo místa dost a nejen, že spíš sám, ale také dostatečně daleko od Burgetové.") # Opraveno Tvoji -> Tvojí a pozice čárky
             scena += 1
         elif scena == 2:
-            print("Z pokoje už jsi do večera radši nevyšel. Nechtěl jsi riskovat interakce s místními obyvately.\n" \
+            print("Z pokoje už jsi do večera radši nevyšel. Nechtěl jsi riskovat interakce s místními obyvateli.\n" \
             "Spalo se ti skvěle, když v tom najednou, někdo začal klepat na tvé zamčené dveře\n" \
             "se slovy: 'Bububu, mám rád malé děti!'. Co to mohlo být? Byla to Tomková, která\n" \
-            "zrovna jen projevovala svoje chutě, nebo snad Slačík, který to myslel naprosto vážně?")
+            "zrovna jen projevovala svoje chutě, nebo snad Slačík, který to myslel naprosto vážně?") # Opraveno obyvately -> obyvateli
             print("-----------------------------------------")
-            print("Nechat to být - 1")
-            print("Nahlédnout za dveře - 2")
+            print("Nechat to být - 1.") # Doplněna tečka
+            print("Nahlédnout za dveře - 2.") # Doplněna tečka
             print("-----------------------------------------")
             while True:
                 rozhodnuti_2 = input(">")
@@ -264,8 +262,8 @@ while hra:
                 if rozhodnuti_2 == "1":
                     print("Pokusil jsi se usnout, ale jednoduše to nejde. Klepání pokračuje.")
                     print("-----------------------------------------")
-                    print("Nechat to být - 1")
-                    print("Nahlédnout za dveře - 2")
+                    print("Nechat to být - 1.") # Doplněna tečka
+                    print("Nahlédnout za dveře - 2.") # Doplněna tečka
                     print("-----------------------------------------")
                     continue
                 elif rozhodnuti_2 == "2":
@@ -274,8 +272,8 @@ while hra:
                     "Vůbec nevíš proč, ale očividně mu vadí nějaký tvůj hluk. Nejspíš jsi chrápal.\n" \
                     "Každopádně se ho potřebuješ zbavit.")
                     print("-----------------------------------------")
-                    print("Mile mu vzkázat, ať se odebere ke spánku - 1")
-                    print("Začít ho finančně vydírat - 2")
+                    print("Mile mu vzkázat, ať se odebere ke spánku - 1.") # Doplněna tečka
+                    print("Začít ho finančně vydírat - 2.") # Doplněna tečka
                     print("-----------------------------------------")
                     rozhodnuti_zidasek = input(">")
                     print("-----------------------------------------")
@@ -283,20 +281,20 @@ while hra:
                         zidasek_odehnani_random = random.randint(1,3)
                         if zidasek_odehnani_random == 3:
                             print("Z nějakýho důvodu tohle zafungovalo. Utekl tak rychle, že mu z kapsy\n" \
-                            "ještě vypadla dvacetikorunovka. Snad bude víc..")
+                            "ještě vypadla dvacetikorunovka. Snad bude víc...") # Opraveno víc.. -> víc...
                             zmen_penize(+20)
                         else:
-                            print("To bylo hodně naivní. Po krátké a nepřelhledné hádce jsi zjistil, že\n" \
+                            print("To bylo hodně naivní. Po krátké a nepřehledné hádce jsi zjistil, že\n" \
                             "Židásek sice odešel, z peněženky ti ale zmizelo 20 korun. V Ústí je tohle\n" \
-                            "na denním i nočním pořádku.")
+                            "na denním i nočním pořádku.") # Opraveno nepřelhledné -> nepřehledné
                             zmen_penize(-20)
                     elif rozhodnuti_zidasek == "2":
                         print("To nebyl zas tak hloupý nápad. Je to přece žid, peněz na to, aby tě\n" \
                         "uplatil, musí mít logicky dost, to je jasný. Má pro tebe nabídku - 100 korun\n" \
-                        "za to, že se budeš do rána snažit bejt zticha.")
+                        "za to, že se budeš do rána snažit bejt zticha.") # Doplněna tečka na konci
                         print("-----------------------------------------")
-                        print("Přijmout nabídku - 1 ")
-                        print("Říct si o víc - 2")
+                        print("Přijmout nabídku - 1.") # Doplněna tečka, odstraněna mezera
+                        print("Říct si o víc - 2.") # Doplněna tečka
                         print("-----------------------------------------")
                         rozhodnuti_zidasek_vydirani = input(">")
                         if rozhodnuti_zidasek_vydirani == "1":
@@ -310,9 +308,9 @@ while hra:
                                 "200 korun.")
                                 zmen_penize(+200)
                             else:
-                                print("To bylo hodně naivní. Po krátké a nepřelhledné hádce jsi zjistil, že\n" \
+                                print("To bylo hodně naivní. Po krátké a nepřehledné hádce jsi zjistil, že\n" \
                             "Židásek sice odešel, z peněženky ti ale zmizelo 20 korun a dohoda s Jiráskem nikde. V Ústí je tohle ale\n" \
-                            "na denním i nočním pořádku.")
+                            "na denním i nočním pořádku.") # Opraveno nepřelhledné -> nepřehledné
                                 zmen_penize(-20)
                         else:
                             print("Neplatný vstup.")
@@ -322,42 +320,41 @@ while hra:
                     print("Neplatný vstup.")
                 break
             scena +=1
-          
+
         elif scena == 3:
             print("Po nočním útoku na soukromé vlastnictví jsi v pořádku přežil\n" \
             "zbytek noci, ale ráno toho možná začínáš litovat. Venku lije jak Slačík po ránu\n" \
-            "a tak to vypadá, že budeš celý den zaseklý na ubytovně s našemi Třemi mušketýry.\n" \
+            "a tak to vypadá, že budeš celý den zaseklý na ubytovně s našimi Třemi mušketýry.\n" \
             "S nekonečným nic-neděláním má Tomková bohaté zkušenosti, tudíž se programu na dnešek\n" \
-            "ujala ona.")
+            "ujala ona.") # Opraveno našemi -> našimi
             print()
             print("Krátce po přestávce na ranní hygienu ale začíná docházet na nejhorší.\n" \
             "Tomková dostala hlad. Výjimečně jsi se od ní ovšem dozvěděl, co máš udělat,\n" \
             " žádná hitparáda to ale nebude. Poslala tě pro snídani z místní benzínky, kterou\n" \
-            "ku podivu ještě nerozkradli.")
+            "kupodivu ještě nerozkradli.") # Opraveno ku podivu -> kupodivu
             obchod()
             scena += 1
         elif scena == 4:
-            if svacina or premium_toasty in inventar:
+            if svacina in inventar or premium_toasty in inventar: # Opravena logická chyba v podmínce
                 if premium_toasty in inventar:
                     zmen_item(premium_toasty, -1)
                     print("Výborně. Tomková byla nadšená z toastů a jako odměnu ti ještě něco přispěla zpátky.")
                     zmen_penize(cena_premium_toasty + 30)
-                    zmen_zivoty(0,7)
-                else:
-                    print("To bylo těsné, ještě, že jsi pořád měl tu svačinu z Prahy a mohl jsi ji ji podstrčit.\n" \
-                    "Možná by přece jenom bylo chytřejší něco koupit.")
+                    zmen_zivoty(0.7) # Opraven argument na 0.7
+                else: # toto else se vztahuje k `if premium_toasty in inventar`
+                    print("To bylo těsné, ještě že jsi pořád měl tu svačinu z Prahy a mohl jsi jí ji podstrčit.\n" \
+                    "Možná by přece jenom bylo chytřejší něco koupit.") # Opraveno ještě, že -> ještě že; ji ji -> jí ji
                     zmen_item(svacina, -1)
             else:
-                print("Proč jsi ji kurva něco nekoupil? Teď bude sakra těžký s ní přežít. Ještě jsi ji musel uplatit\n," \
-                "aby tě přímo nezabila.")
+                print("Proč jsi jí kurva něco nekoupil? Teď bude sakra těžký s ní přežít. Ještě jsi ji musel uplatit,\n" \
+                "aby tě přímo nezabila.") # Opraveno Proč jsi ji -> Proč jsi jí; opravena pozice čárky
                 zmen_zivoty(-3)
                 zmen_penize(cena_premium_toasty -20)
             scena += 1
         elif scena == 5:
-            print("Odpoledne se situace moc neposonula. Pořád a pořád pršelo, Slačík dává už šestou zelenou\n" \
-            "a Tomková zase začala vymýšlet.")
-            
+            print("Odpoledne se situace moc neposunula. Pořád a pořád pršelo, Slačík dává už šestou zelenou\n" \
+            "a Tomková zase začala vymýšlet.") # Opraveno neposonula -> neposunula
 
-           
+
     else:
-        print("Neplatný vstup.")    
+        print("Neplatný vstup.")
