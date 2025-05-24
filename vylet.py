@@ -10,18 +10,16 @@ penize = 200
 minimalni_penize = 0
 inventar = {"svačina": 1}
 cas = datetime.datetime.strptime("08:00", "%H:%M").time()
-scena = 7 # Start at scene 7 for testing the fight directly
+scena = 7
 hra = True
 tomkova_body = 0
-jirasek_zije = True # This global variable seems unused in the provided fight logic for its outcome.
-
-# pocatecni hodnoty pro rvacku (these are global and will be reset at the start of each fight instance)
-rvacka = True 
-rvacka_zivoty_hrac = 10.0 
-rvacka_zivoty_jirasek = 10.0
+jirasek_zije = True
+# pocatecni hodnoty pro rvacku
+rvacka = True
+rvacka_zivoty_hrac = 10
+rvacka_zivoty_jirasek = 10
 rvacka_tah_hrac = True
 rvacka_tah_jirasek = False
-
 #pocatecni hodnoty pro obchod
 pocet_bonbonu = 0
 cena_bonbony = 60
@@ -38,7 +36,7 @@ srdce_tomkove = "srdce paní profesorky"
 
 # změna životů, aby nepřesáhly maximální hodnotu
 def zmen_zivoty(hodnota_zivotu):
-    global zivoty, maximalni_zivoty, hra 
+    global zivoty, maximalni_zivoty
     zivoty += hodnota_zivotu
     if zivoty <= 0:
         if srdce_tomkove in inventar:
@@ -47,7 +45,7 @@ def zmen_zivoty(hodnota_zivotu):
             zmen_item(srdce_tomkove, -1)
             zivoty = 0.5
         else:
-            konec_hry() # CORRECTED: Call the function
+            konec_hry() # FIXED: Added parentheses to call the function
             
     zivoty = min(zivoty, maximalni_zivoty)
 
@@ -59,7 +57,6 @@ def zmen_penize(hodnota_penez):
 
 # změna itemů z listu
 def zmen_item(item, zmena_itemu):
-    global inventar 
     if item in inventar:
         inventar[item] += int(zmena_itemu)
         if inventar[item] <= 0:
@@ -69,24 +66,19 @@ def zmen_item(item, zmena_itemu):
 
 # výčet inventáře
 def vycet_inventare():
-    global inventar 
-    if not inventar: # Check if inventory is empty first
-        print("Inventář je prázdný", end="") # end="" to allow newline later or other text
-        return
-
-    item_strings = []
     for item, pocet in inventar.items():
-        item_strings.append(f"{item.capitalize()} (x{pocet})")
-    print(", ".join(item_strings), end="")
+                    print(str(item.capitalize()) + " (x" + str(pocet) + "), ", end="") # Added end="" to avoid extra newline if used inline
 
 # defaultní menu, včetně inputů a interakcí se staty a inventářem
 def menu():
-    global zivoty, penize, inventar, cas 
+    global zivoty, penize, inventar, cas
     print("-----------------------------------------")
-    print(f"Aktuálně je: {cas}\nŽivoty: {zivoty:.1f} \nPeníze: {penize}") # Display zivoty with one decimal
-    print("Inventář: ", end="")
-    vycet_inventare()
-    print() # Newline after inventory list
+    print(f"Aktuálně je: {cas}\nŽivoty: {zivoty} \nPeníze: {penize}")
+    if len(inventar) >= 1:
+        vycet_inventare()
+        print() # Add a newline after inventory if it's not empty
+    else:
+        print("Inventář je prázdný")
     print("-----------------------------------------")
     print("Pokračovat v příběhu - 1.")
     print("Interakce s inventářem - 2.")
@@ -98,8 +90,8 @@ def menu():
 
 # obchod, který je průběžně dostupný
 def obchod():
-    global penize, inventar, cena_bonbony, cena_premium_toasty, cena_zbran, pocet_bonbonu
     while True:
+        global penize, inventar, vstup_obchod, cena_bonbony, cena_premium_toasty, cena_zbran, pocet_bonbonu
         print("-----------------------------------------")
         print("             REFRESH BISTRO")
         print("-----------------------------------------")
@@ -114,7 +106,7 @@ def obchod():
         if vstup_obchod == "1":
             if penize >= cena_premium_toasty:
                 zmen_penize(-cena_premium_toasty)
-                zmen_item(premium_toasty , +1) 
+                zmen_item("Premium Toast" , +1)
                 print("Úspěšně jsi získal Premium Toast.")
                 cena_premium_toasty += 15
             else:
@@ -122,7 +114,7 @@ def obchod():
         elif vstup_obchod == "2":
             if penize >= cena_bonbony and pocet_bonbonu < 3:
                 zmen_penize(-cena_bonbony)
-                zmen_item(bonbony , +1) 
+                zmen_item("Bonbóny" , +1)
                 print("Úspěšně jsi získal bonbóny.")
                 cena_bonbony += 40
                 pocet_bonbonu += 1
@@ -133,15 +125,15 @@ def obchod():
         elif vstup_obchod == "3":
             if penize >= cena_zbran:
                 zmen_penize(-cena_zbran)
-                zmen_item(zbran , +1) 
+                zmen_item("Zbraň" , +1)
                 print("Úspěšně jsi získal zbraň.")
             else:
                 print("Nemáš dostatek peněz na zbraň.")
         elif vstup_obchod == "4":
-            print(f"{premium_toasty.capitalize()} - Základní potravina. Doplní 2 životy.")
-            print(f"{bonbony.capitalize()} - výborné na uplácení - zvyšují všechny šance v příběhu o zhruba 10%.\n" \
+            print("Premium Toast - Základní potravina. Doplní 2 životy.")
+            print("Bonbóny - výborné na uplácení - zvyšují všechny šance v příběhu o zhruba 10%.\n" \
             "Lze zakoupit víckrát pro ještě větší zvýšení šancí.")
-            print(f"{zbran.capitalize()} - Standardní pistole s malorážkou. Ideální na Židáska.")
+            print("Standardní pistole s malorážkou. Ideální na Židáska.")
         elif vstup_obchod == "5":
             break
         else:
@@ -150,12 +142,12 @@ def obchod():
 # dialog s koncem hry, druh konce asi podle boolean
 def konec_hry():
     global hra
-    print("Hra skončila. (Placeholder - 'teď to fakt psát nebudu')") 
+    print("teď to fakt psát nebudu")
     hra = False
 
 # generování šancí
 def sance(sance_zakladni):
-    global pocet_bonbonu 
+    global pocet_bonbonu
     return random.random() <= sance_zakladni + pocet_bonbonu * 0.1
 
 
@@ -174,7 +166,7 @@ print("sekce - životy, peníze a inventář. Pamatuj, že 10 je ")
 print("maximální hodnota tvých životů a jakékoliv životy navíc")
 print("se smažou. S některými předměty v tvém inventáři můžeš reagovat,")
 print("ale jen mezi scénami. Na začátek jsi od maminky")
-print(f"dostal {svacina}, která ti přidá 2.5 životů. Během hry se ti") # Used variable
+print("dostal svačinu, která ti přidá 2.5 životů. Během hry se ti")
 print("také bude nepravidelně zobrazovat obchod, ve kterém se převážně")
 print("kvůli Fialovi postupně zvyšují ceny.")
 print("-----------------------------------------")
@@ -182,11 +174,14 @@ print("                    HODNĚ ŠTĚSTÍ")
 
 # hlavní smyčka
 while hra:
+    # definice vstupu
     vstup = menu()
 
+    # prohrávající conditions
     if vstup == "3":
-      konec_hry() 
+      hra = False
 
+    # interakce s inventářem
     elif vstup == "2":
         if len(inventar) < 1:
             print("Tvůj inventář je prázdný.")
@@ -194,56 +189,45 @@ while hra:
             print("Se kterým z těchto předmětů si přeješ interagovat?")
             print("-----------------------------------------")
             inventar_list = list(inventar.keys())
-            for index, item_name in enumerate(inventar_list, start=1):
-                print(f"{index} - {item_name.capitalize()} (x{inventar[item_name]})")
+            for index, item in enumerate(inventar_list, start=1):
+                print(f"{index} - {item.capitalize()} (x{inventar[item]})")
             print("-----------------------------------------")
             vstup_item = input(">")
             print("-----------------------------------------")
 
             if vstup_item.isdigit():
-                index_choice = int(vstup_item) # Renamed to avoid conflict
-                if 1 <= index_choice <= len(inventar_list):
-                    zvoleny_item = inventar_list[index_choice - 1]
-                    
-                    if zvoleny_item == svacina: 
-                        print(f"Chcete zkonzumovat svoji {svacina} a přidat si 2.5 životů? y/n")
-                        print("-----------------------------------------")
-                        rozhodnuti_svacina = input(">").lower() 
-                        print("-----------------------------------------")
-                        if rozhodnuti_svacina == "y":
-                            zmen_zivoty(2.5)
-                            zmen_item(svacina, -1)
-                            print(f"Úspěšně jste snědli svoji {svacina}. Nyní máte {zivoty:.1f} životů.")
-                        elif rozhodnuti_svacina == "n":
-                            print(f"Rozhodli jste nesníst svoji {svacina} a ponechat si svých {zivoty:.1f} životů.")
-                        else:
-                            print("Neplatná volba.")
-                    elif zvoleny_item == krabicove_vino: 
-                        print("S vínem prozatím nelze interagovat. Jeho čas ovšem přijde.")
-                    elif zvoleny_item == premium_toasty:
-                        print(f"Chcete sníst {premium_toasty} a doplnit si 2 životy? y/n")
-                        print("-----------------------------------------")
-                        rozhodnuti_toast = input(">").lower()
-                        print("-----------------------------------------")
-                        if rozhodnuti_toast == "y":
-                            zmen_zivoty(2.0) 
-                            zmen_item(premium_toasty, -1)
-                            print(f"Snědl jsi {premium_toasty}. Nyní máš {zivoty:.1f} životů.")
-                        elif rozhodnuti_toast == "n":
-                            print(f"Nechal sis {premium_toasty}.")
-                        else:
-                            print("Neplatná volba.")
-                    # Add other item interactions here
-                    else:
-                        print(f"S předmětem '{zvoleny_item.capitalize()}' nelze prozatím interagovat.")
+                index = int(vstup_item)
+                if index in range(1, len(inventar_list) + 1):
+                    zvoleny_item = inventar_list[index - 1]
+                    if zvoleny_item in inventar:
+                        if zvoleny_item == "svačina":
+                            print("Chcete zkonzumovat svoji svačinu a přidat si 2.5 životů? y/n")
+                            print("-----------------------------------------")
+                            rozhodnuti_svacina = input(">")
+                            print("-----------------------------------------")
+                            if rozhodnuti_svacina == "y":
+                                zmen_zivoty(2.5)
+                                zmen_item(svacina, -1)
+                                print(f"Úspěšně jste snědli svoji svačinu. Nyní máte {zivoty} životů.")
+                            elif rozhodnuti_svacina == "n":
+                                print(f"Rozhodli jste nesníst svoji svačinu a ponechat si svých {zivoty} životů.")
+                        elif zvoleny_item == "krabicové víno":
+                            print("S vínem prozatím nelze interagovat. Jeho čas ovšem přijde.")
                 else:
-                    print("Daný předmět se ve vašem inventáři nenachází (neplatný index).")
-            else:
-                print("Neplatný vstup pro výběr předmětu.")
+                    print("-----------------------------------------")
+                    print("Daný předmět se ve vašem inventáři nenachází.")
 
+    # scény
     elif vstup == "1":
         if scena == 0:
-            print("Je pondělí, osm hodin ráno. ...") # Shortened for brevity
+            print("Je pondělí, osm hodin ráno. Přicházíš na slavné parkoviště\n" \
+            "před školou, ale zjistil jsi nečekanou novinku. Všem, kromě tebe se\n" \
+            "porařilo z výletu nějak vymluvit. František je na Šumavě, Matouš s\n" \
+            "ním a dokonce i Štěpán má něco lepšího na práci. Ale teď už je pozdě.\n" \
+            "Na výlet se musíš vydat pouze ty, Tomková, Burgetová, ale naštěstí i \n" \
+            "Slačík, který je mimochodem zase zlitej pod obraz. Snad nebude řídit.\n" \
+            "Tomková svým obřím zadkem zabrala všechna volná místa v autobuse, takže\n" \
+            "si musíš sednout vedle někoho.")
             print("-----------------------------------------")
             print("Posadit se vedle Slačíka - 1.")
             print("Posadit se vedle Tomkový - 2.")
@@ -252,145 +236,192 @@ while hra:
             rozhodnuti_0 = input(">")
             print("-----------------------------------------")
             if rozhodnuti_0 == "1":
-                print("Slačík s tebou soucítí ...")
+                print("Slačík s tebou soucítí a proto ti předal jeho cenné krabicové\n"
+                "víno poznání, má ho totiž ještě do zásoby spoustu. Tímto vínem se dokážeš\n"
+                "opít tak efektivně, že když se tě někdo bude dožadovat nějaké znalostní otázky,\n"
+                " budeš vždycky vědět správnou odpověď. Taky ti dal dvacku ze své peněženky.\n")
                 zmen_item(krabicove_vino, +1)
                 zmen_penize(20)
-                scena += 1 
             elif rozhodnuti_0 == "2":
-                if svacina in inventar: 
-                   print("Co sis jako kurva myslel? ...")
-                   zmen_item(svacina, -1) 
+                if "svačina" in inventar:
+                   print("Co sis jako kurva myslel? Máš štěstí, že jsi u sebe pořád měl\n" \
+                   "tu svačinu, kterou jsi mohl Tomkovou uplatit, jinak by tě asi rozsedla.")
+                   zmen_item(svacina, -1)
                 else:
-                    print("Tak to byl hodně dementní nápad. ... Přicházíš o 4 životy.")
-                    zmen_zivoty(-4.0) 
-                scena += 1 
+                    print("Tak to byl hodně dementní nápad. Protože jsi svoji svačinu už snědl,\n" \
+                    "Tomková se nasrala, že pro ni nic nemáš a sedla si na tebe. Přicházíš o 4 životy.")
+                    zivoty -= 4 # Direct modification, consider using zmen_zivoty for consistency if game over can happen here
+                    # scena += 1 # This was outside the if/else in original, now it is
             elif rozhodnuti_0 == "3":
-                print("Ze všech možností si vybereš tuhle? ... Přicházíš o dva životy.")
-                zmen_zivoty(-2.0) 
-                scena += 1 
+                print("Ze všech možností si vybereš tuhle? Na to bych se ani já necejtil... \n" \
+                "A Burgetová se taky necejtí. Přicházíš o dva životy.")
+                zivoty -= 2 # Direct modification
             else:
-                print("Neplatný vstup. Zkus to znovu.")
+                print("Neplatný vstup.")
+            scena += 1
         elif scena == 1:
-            print("Tvojí záchranou bylo, ...")
+            print("Tvojí záchranou bylo, že vzhledem k tomu, že škola zarezervovala pokoje pro třicet\n" \
+            "lidí (a jednu Tomkovou), bylo místa dost a nejen, že spíš sám, ale také dostatečně daleko od Burgetové.")
             scena += 1
         elif scena == 2:
-            print("Z pokoje už jsi do večera radši nevyšel. ...")
+            print("Z pokoje už jsi do večera radši nevyšel. Nechtěl jsi riskovat interakce s místními obyvateli.\n" \
+            "Spalo se ti skvěle, když v tom najednou, někdo začal klepat na tvé zamčené dveře\n" \
+            "se slovy: 'Bububu, mám rád malé děti!'. Co to mohlo být? Byla to Tomková, která\n" \
+            "zrovna jen projevovala svoje chutě, nebo snad Slačík, který to myslel naprosto vážně?")
             print("-----------------------------------------")
             print("Nechat to být - 1.")
             print("Nahlédnout za dveře - 2.")
             print("-----------------------------------------")
-            valid_choice_made_sc2 = False
-            while not valid_choice_made_sc2 and hra: 
+            while True:
                 rozhodnuti_2 = input(">")
                 print("-----------------------------------------")
                 if rozhodnuti_2 == "1":
                     print("Pokusil jsi se usnout, ale jednoduše to nejde. Klepání pokračuje.")
                     print("-----------------------------------------")
-                    print("Nechat to být - 1.") 
+                    print("Nechat to být - 1.")
                     print("Nahlédnout za dveře - 2.")
                     print("-----------------------------------------")
+                    continue
                 elif rozhodnuti_2 == "2":
-                    print("Nahlédl jsi za dveře ...")
+                    print("Nahlédl jsi za dveře a záhada se okamžitě vyřešila. 'Mohl bys\n" \
+                    "toho nechat?' ozvalo se. Ten zasranej zeměpisář se nasere fakt všude.\n" \
+                    "Vůbec nevíš proč, ale očividně mu vadí nějaký tvůj hluk. Nejspíš jsi chrápal.\n" \
+                    "Každopádně se ho potřebuješ zbavit.")
                     print("-----------------------------------------")
                     print("Mile mu vzkázat, ať se odebere ke spánku - 1.")
                     print("Začít ho finančně vydírat - 2.")
                     print("-----------------------------------------")
-                    
-                    valid_zidasek_choice = False
-                    while not valid_zidasek_choice and hra: 
-                        rozhodnuti_zidasek = input(">")
-                        print("-----------------------------------------")
-                        if rozhodnuti_zidasek == "1":
-                            if sance(0.3):
-                                print("Z nějakýho důvodu tohle zafungovalo. ... dvacetikorunovka.")
-                                zmen_penize(+20)
-                            else:
-                                print("To bylo hodně naivní. ... zmizelo 20 korun.")
-                                zmen_penize(-20)
-                            valid_zidasek_choice = True
-                            valid_choice_made_sc2 = True
-                        elif rozhodnuti_zidasek == "2":
-                            print("To nebyl zas tak hloupý nápad. ... nabídku - 100 korun ...")
-                            print("-----------------------------------------")
-                            print("Přijmout nabídku - 1.")
-                            print("Říct si o víc - 2.")
-                            print("-----------------------------------------")
-                            rozhodnuti_zidasek_vydirani = input(">")
-                            print("-----------------------------------------") 
-                            if rozhodnuti_zidasek_vydirani == "1":
-                                zmen_penize(+100)
-                                print("Přijmul jsi Jiráskovu nabídku ... 100 korun.")
-                            elif rozhodnuti_zidasek_vydirani == "2":
-                                zidasek_vydirani_random = random.randint(1,2)
-                                if zidasek_vydirani_random == 1:
-                                    print("On má opravdu peněz na rozdávání. ... 200 korun.")
-                                    zmen_penize(+200)
-                                else:
-                                    print("To bylo hodně naivní. ... zmizelo 20 korun ...")
-                                    zmen_penize(-20)
-                            else:
-                                print("Neplatný vstup pro vydírání. Jiráskovi došla trpělivost a odešel.")
-                            valid_zidasek_choice = True # Even if vydirani input is bad, this path is chosen
-                            valid_choice_made_sc2 = True
+                    rozhodnuti_zidasek = input(">")
+                    print("-----------------------------------------")
+                    if rozhodnuti_zidasek == "1":
+                        if sance(0.3):
+                            print("Z nějakýho důvodu tohle zafungovalo. Utekl tak rychle, že mu z kapsy\n" \
+                            "ještě vypadla dvacetikorunovka. Snad bude víc...")
+                            zmen_penize(+20)
                         else:
-                            print("Neplatný vstup pro interakci s Jiráskem. Zkus to znovu.")
+                            print("To bylo hodně naivní. Po krátké a nepřehledné hádce jsi zjistil, že\n" \
+                            "Židásek sice odešel, z peněženky ti ale zmizelo 20 korun. V Ústí je tohle\n" \
+                            "na denním i nočním pořádku.")
+                            zmen_penize(-20)
+                    elif rozhodnuti_zidasek == "2":
+                        print("To nebyl zas tak hloupý nápad. Je to přece žid, peněz na to, aby tě\n" \
+                        "uplatil, musí mít logicky dost, to je jasný. Má pro tebe nabídku - 100 korun\n" \
+                        "za to, že se budeš do rána snažit bejt zticha.")
+                        print("-----------------------------------------")
+                        print("Přijmout nabídku - 1.")
+                        print("Říct si o víc - 2.")
+                        print("-----------------------------------------")
+                        rozhodnuti_zidasek_vydirani = input(">")
+                        if rozhodnuti_zidasek_vydirani == "1": # Missing print("-----------------------------------------") here in original
+                            zmen_penize(+100)
+                            print("Přijmul jsi Jiráskovu nabídku a získal jsi 100 korun.\n" \
+                            "Docela jednoduše vydělané peníze.")
+                        elif rozhodnuti_zidasek_vydirani == "2":
+                            zidasek_vydirani_random = random.randint(1,2)
+                            if zidasek_vydirani_random == 1:
+                                print("On má opravdu peněz na rozdávání. Povedlo se ti vyhádat\n" \
+                                "200 korun.")
+                                zmen_penize(+200)
+                            else:
+                                print("To bylo hodně naivní. Po krátké a nepřehledné hádce jsi zjistil, že\n" \
+                            "Židásek sice odešel, z peněženky ti ale zmizelo 20 korun a dohoda s Jiráskem nikde. V Ústí je tohle ale\n" \
+                            "na denním i nočním pořádku.")
+                                zmen_penize(-20)
+                        else:
+                            print("Neplatný vstup.")
+                    else:
+                        print("Neplatný vstup.")
                 else:
-                    print("Neplatný vstup. Zkus to znovu.")
-            if hra: scena +=1 # Only advance if game is still running
+                    print("Neplatný vstup.")
+                break
+            scena +=1
+
         elif scena == 3:
-            print("Po nočním útoku ...")
+            print("Po nočním útoku na soukromé vlastnictví jsi v pořádku přežil\n" \
+            "zbytek noci, ale ráno toho možná začínáš litovat. Venku lije jak Slačík po ránu\n" \
+            "a tak to vypadá, že budeš celý den zaseklý na ubytovně s našimi Třemi mušketýry.\n" \
+            "S nekonečným nic-neděláním má Tomková bohaté zkušenosti, tudíž se programu na dnešek\n" \
+            "ujala ona.")
+            print()
+            print("Krátce po přestávce na ranní hygienu ale začíná docházet na nejhorší.\n" \
+            "Tomková dostala hlad. Výjimečně jsi se od ní ovšem dozvěděl, co máš udělat,\n" \
+            " žádná hitparáda to ale nebude. Poslala tě pro snídani z místní benzínky, kterou\n" \
+            "kupodivu ještě nerozkradli.")
             obchod()
             scena += 1
         elif scena == 4:
-            if premium_toasty in inventar: 
-                zmen_item(premium_toasty, -1)
-                print("Výborně. Tomková byla nadšená z toastů ...")
-                # Price might have changed, so use the value at time of purchase for refund logic
-                # For simplicity, using current cena_premium_toasty, but this could be refined
-                zmen_penize(cena_premium_toasty + 30) 
-                zmen_zivoty(0.7)
-            elif svacina in inventar:
-                print("To bylo těsné, ještě že jsi pořád měl tu svačinu ...")
-                zmen_item(svacina, -1)
+            if svacina in inventar or premium_toasty in inventar:
+                if premium_toasty in inventar:
+                    zmen_item(premium_toasty, -1)
+                    print("Výborně. Tomková byla nadšená z toastů a jako odměnu ti ještě něco přispěla zpátky.")
+                    zmen_penize(cena_premium_toasty + 30)
+                    zmen_zivoty(0.7)
+                else:
+                    print("To bylo těsné, ještě že jsi pořád měl tu svačinu z Prahy a mohl jsi jí ji podstrčit.\n" \
+                    "Možná by přece jenom bylo chytřejší něco koupit.")
+                    zmen_item(svacina, -1)
             else:
-                print("Proč jsi jí kurva něco nekoupil? ...")
-                zmen_zivoty(-3.0)
-                zmen_penize(-(cena_premium_toasty - 20)) 
+                print("Proč jsi jí kurva něco nekoupil? Teď bude sakra těžký s ní přežít. Ještě jsi ji musel uplatit,\n" \
+                "aby tě přímo nezabila.")
+                zmen_zivoty(-3)
+                zmen_penize(cena_premium_toasty -20) # This logic might make money positive
             scena += 1
         elif scena == 5:
-            print("Odpoledne se situace moc neposunula. ...")
-            tomkova_body = 0 
+            print("Odpoledne se situace moc neposunula. Pořád a pořád pršelo, Slačík dává už šestou zelenou\n" \
+            "a Tomková zase začala vymýšlet. Bohužel má ale připravenou závěrečný přepadový test jen pro tercii,\n" \
+            "jelikož s vaší třídou ji to prostě nebaví a tak budeš muset vymyslet krátký test. První si ale\n" \
+            "Tomková prověří tvoje hluboké znalosti.")
             print("-----------------------------------------")
-            print("Pověz mi, v jakém roce zavedla Marie Terezie povinnou školní docházku? ...")
+            print("Pověz mi, v jakém roce zavedla Marie Terezie povinnou školní docházku?")
+            print("1. - 1774 ")
+            print("2. - 1775")
+            print("3. - 1780")
+            print("-----------------------------------------")
             tomkova_terezie = input(">")
             print("-----------------------------------------")
-            if tomkova_terezie == ("1"): tomkova_body +=1
-            
-            print("Pověz mi, v jakém roce byla zrušena nevolnictví? ...")
+            if tomkova_terezie == ("1"):
+                tomkova_body +=1
+            print("-----------------------------------------") # This was missing in original
+            print("Pověz mi, v jakém roce byla zrušena nevolnictví?")
+            print("1. - 1786 ")
+            print("2. - 1781")
+            print("3. - 1780")
+            print("-----------------------------------------")
             tomkova_nevolnictvi = input(">")
             print("-----------------------------------------")
-            if tomkova_nevolnictvi == ("2"): tomkova_body +=1
-
-            print("Pověz mi, v jakém roce zemřela Marie Terezie? ...")
+            if tomkova_nevolnictvi == ("2"):
+                tomkova_body +=1
+            print("Pověz mi, v jakém roce zemřela Marie Terezie?")
+            print("1. - 1780 ")
+            print("2. - 1787")
+            print("3. - 1786")
+            print("-----------------------------------------")
             tomkova_terezie_zemrela = input(">")
             print("-----------------------------------------")
-            if tomkova_terezie_zemrela == ("1"): tomkova_body +=1
-
+            if tomkova_terezie_zemrela == ("1"):
+                tomkova_body +=1
             if tomkova_body == 0:
-                print("Tomková byla zklamaná ... Přicházíš o 4 životy.")
-                zmen_zivoty(-4.0)
+                print("Tomková byla zklamaná, že jsi se vůbec nepřipravil. Přicházíš o 4 životy.")
+                zivoty -= 4
             elif tomkova_body == 1:
-                print("Tomková byla zklamaná ... Přicházíš o 2 životy.")
-                zmen_zivoty(-2.0)
+                print("Tomková byla zklamaná a v Praze tě hned pošle do zadní lavice. Přicházíš o 2 životy.")
+                zivoty -= 2
             elif tomkova_body == 2:
-                print("Solidní výkon, Tomková byla spokojená ... 135 peněz.")
+                print("Solidní výkon, Tomková byla spokojená a nechala tě vytvořit test pro terciány.\
+                      Ten jsi jim následně přeprodal a vydělal jsi si 135 peněz.")
                 zmen_penize(135)
             elif tomkova_body ==3:
-                print("Tomková je naprosto unešená. ... srdce paní profesorky.")
+                print("Tomková je naprosto unešená. Bohužel jen obrazně. Nechala tě vytvořit\n" \
+                "test pro terciány a jako pochvalu za tento úchvatný výkon ti dala dar. Nedala ti\n" \
+                "nic jiného, než její srdce, které už nechtěla mít na správném místě. Toto srdce ti slouží\n" \
+                "jako záložní život, který, pokud dojde na nejhorší a měl by jsi umřít tě zachrání a tvoje\n" \
+                "životy se místo hodnoty 0 zastaví na hodnotě 0.5.")
                 zmen_item(srdce_tomkove, +1)
             scena += 1
         elif scena == 6:
-            print("Aktivita kvízu zabrala celé odpoledne ...")
+            print("Aktivita kvízu zabrala celé odpoledne a tak už jsi se neodvážel nic udělat. Pokojně\n" \
+            "usínáš a doufáš, že přes noc přestane pršet, protože další takto intimní den s Tomkovou\n" \
+            "by jsi nepřežil. ")
             scena += 1
         elif scena == 7:
             print("Probudil tě nepříliž výrazný zvuk kroků z chodby. Na tom by nebylo nic zvláštního, ale\n" \
@@ -399,158 +430,156 @@ while hra:
             "těma dveřma? Ty zvuky jsou nepříjemné!'. No jasně, že tě to nenapadlo. Ten žid se tě pokusil okrást\n" \
             "znova! Tentokrát už si to ale líbit nenecháš. Je třeba tomu hajzlovi domluvit, že tě má v noci nechat. ")
             print("-----------------------------------------")
-
-            # --- START OF FIXED FIGHT LOGIC ---
+            
+            # --- START OF MINIMAL FIX FOR FIGHT ---
+            # Reset fight state variables (these are global, re-initializing for this fight instance)
             rvacka = True 
-            rvacka_zivoty_hrac = 10.0 
-            rvacka_zivoty_jirasek = 10.0
+            rvacka_zivoty_hrac = 10
+            rvacka_zivoty_jirasek = 10
             rvacka_tah_hrac = True
             rvacka_tah_jirasek = False
-            fight_outcome_special = False 
+            odlakano_special_outcome = False # Flag for the special "odlákat" outcome
 
-            while rvacka and hra: # Main fight loop, also check if game is still active
-                if rvacka_tah_hrac:
-                    print("            RVAČKA S JIRÁSKEM")
-                    print("-----------------------------------------")
-                    print(f"Tvoje životy - {rvacka_zivoty_hrac:.1f}") 
-                    print(f"Jiráskovy životy - {rvacka_zivoty_jirasek:.1f}")
-                    print("-----------------------------------------")
-                    print("                Útočíš!")
-                    print("-----------------------------------------")
-                    print("1. Hodit po Jiráskovi ředkvičku")
-                    print("2. Přiškrtit Jiráska drátovou myší")
-                    print("3. Odlákat Jiráska desetikorunou")
-                    print("-----------------------------------------")
-                    rvacka_vstup = input(">")
-                    print("-----------------------------------------")
-
-                    if rvacka_vstup == "1": 
-                        if sance(0.65):
-                            print("Výborná práce. Jirásek nestihl uhnout a dostal 3 poškození.")
-                            rvacka_zivoty_jirasek -= 3.0
-                        else:
-                            print("To se moc nepovedlo. Netrefil jsi se, asi nemáš mušku z bridže.")
-                        rvacka_tah_hrac = False
-                        rvacka_tah_jirasek = True
-                    elif rvacka_vstup == "2": 
-                        if sance(0.3):
-                            print("Tohle byla skvělá technika. Jirásek se dusí a ztrácí 6 životů.\n" \
-                            "Ještě k tomu můžeš útočit znovu.")
-                            rvacka_zivoty_jirasek -= 6.0
-                        else:
-                            print("To se moc nepovedlo. Jirásek tě chytil za ruku a uštědřil ti 4 poškození.")
-                            rvacka_zivoty_hrac -= 4.0
+            while rvacka:
+                    # Player's Turn
+                    if rvacka_tah_hrac: # Removed health checks from here, they are done after actions
+                        print("            RVAČKA S JIRÁSKEM")
+                        print("-----------------------------------------")
+                        print(f"Tvoje životy - {rvacka_zivoty_hrac}")
+                        print(f"Jiráskovy životy - {rvacka_zivoty_jirasek}")
+                        print("-----------------------------------------")
+                        print("                Útočíš!")
+                        print("-----------------------------------------")
+                        print("1. Hodit po Jiráskovi ředkvičku")
+                        print("2. Přiškrtit Jiráska drátovou myší")
+                        print("3. Odlákat Jiráska desetikorunou")
+                        print("-----------------------------------------")
+                        rvacka_vstup = input(">")
+                        print("-----------------------------------------")
+                        if rvacka_vstup == "1":
+                            if sance(0.65):
+                                print("Výborná práce. Jirásek nestihl uhnout a dostal 3 poškození.")
+                                rvacka_zivoty_jirasek -=3
+                            else:
+                                print("To se moc nepovedlo. Netrefil jsi se, asi nemáš mušku z bridže.")
                             rvacka_tah_hrac = False
                             rvacka_tah_jirasek = True
-                    elif rvacka_vstup == "3": 
-                        if penize >= 10:
-                            zmen_penize(-10) 
-                            if sance(0.2):
-                                print("Skvělá taktika. Židásek ti perfektně skočil na lep a po zbytek noci tě přestal\n" \
-                                "otravovat. Zbytek noci se ti spalo perfektně.")
-                                fight_outcome_special = True 
-                                rvacka = False 
+                        elif rvacka_vstup == "2":
+                            if sance(0.3):
+                                print("Tohle byla skvělá technika. Jirásek se dusí a ztrácí 6 životů.\n" \
+                                "Ještě k tomu můžeš útočit znovu.")
+                                rvacka_zivoty_jirasek -=6
+                                # Player attacks again, turn does not switch yet.
                             else:
-                                print("Tohle bylo úplně k ničemu. Pod vlivem adrenalinu asi Židáska\n" \
-                                "peníze tolik nezajímají.")
+                                print("To se moc nepovedlo. Jirásek tě chytil za ruku a uštědřil ti 4 poškození.")
+                                rvacka_zivoty_hrac -=4
                                 rvacka_tah_hrac = False
                                 rvacka_tah_jirasek = True
-                        else:
-                            print("Ještě, kdyby jsi tu desetikorunu měl. Takhle ho sotva odlákáš.")
-                            rvacka_tah_hrac = False 
-                            rvacka_tah_jirasek = True
-                    else:
-                        print("Neplatný vstup. Zkus to znovu.")
-                        continue 
-
-                    if rvacka_zivoty_jirasek <= 0 or rvacka_zivoty_hrac <= 0:
-                        rvacka = False 
-                    
-                    if not rvacka: 
-                        continue
-
-                if rvacka_tah_jirasek and hra: # Check hra here too
-                    print("             RVAČKA S JIRÁSKEM")
-                    print("-----------------------------------------")
-                    print(f"Tvoje životy - {rvacka_zivoty_hrac:.1f}")
-                    print(f"Jiráskovy životy - {rvacka_zivoty_jirasek:.1f}")
-                    print("-----------------------------------------")
-                    print("             Útočí Jirásek!     ")
-                    print("-----------------------------------------")
-
-                    if sance(0.5): 
-                        print("Jirásek vytáhl svoji píšťalku! Zacpal si uši a je připraven k písknutí!")
-                        print("-----------------------------------------")
-                        print("1. Taky si zacpat uši a doufat")
-                        print("2. Spustit Šalom Chaverim a pokusit se ho překřičet")
-                        print("-----------------------------------------")
-                        jirasek_utok_pistalka_vstup = input(">")
-                        print("-----------------------------------------")
-                        if jirasek_utok_pistalka_vstup == "1":
-                            if sance(0.5):
-                                print("Perfektní. Útok jsi úplně odrazil.")
+                        elif rvacka_vstup == "3":
+                            if penize >=10:
+                                zmen_penize(-10) # Deduct money immediately
+                                if sance(0.2):
+                                    # Message will be printed in the outcome block
+                                    odlakano_special_outcome = True
+                                    rvacka = False # End the fight
+                                else:
+                                    print("Tohle bylo úplně k ničemu. Pod vlivem adrenalinu asi Židáska\n" \
+                                    "peníze tolik nezajímají.")
+                                    rvacka_tah_hrac = False
+                                    rvacka_tah_jirasek = True
                             else:
-                                print("Doufal jsi zbytečně. Jiráska lze těžko přemoct v zacpávání uší.\n" \
-                                "Přicházíš o tři životy.")
-                                rvacka_zivoty_hrac -= 3.0
-                        elif jirasek_utok_pistalka_vstup == "2":
-                            if sance(0.25):
-                                print("Fantastický nápad. Z ničeho nic se zjevila postava připomínající\n" \
-                                "svou siluetou Sebastiana Skopového a po Židáskovi se málem slehla zem.\n" \
-                                "Záhadná postava ti také za tvůj výkon přispěla 100 penězi.")
-                                rvacka_zivoty_jirasek -= 7.0
-                                zmen_penize(100)
-                            else:
-                                print("To byl hodně stupidní nápad. Co sis myslel? Že se Židásek lekne?\n" \
-                                "Přicházíš o 3 životy.")
-                                rvacka_zivoty_hrac -= 3.0
+                                print("Ještě, kdyby jsi tu desetikorunu měl. Takhle ho sotva odlákáš.")
+                                # Player's turn should pass if no money.
+                                rvacka_tah_hrac = False 
+                                rvacka_tah_jirasek = True
                         else:
-                            print("Neplatný vstup pro obranu. Jirásek tě zasáhl, ztrácíš 1 život navíc za zmatkování.")
-                            rvacka_zivoty_hrac -= 1.0 
-                    else: 
-                        print("Židásek se rozhodl, že zavolá Burgetovou, ať se na to přijde podívat.\n" \
-                        "Únik před jejím smradem byl nevyhnutelný. Přicházíš o 2 životy." )
-                        rvacka_zivoty_hrac -= 2.0
-                    
-                    rvacka_tah_jirasek = False
-                    rvacka_tah_hrac = True
+                            print("Neplatný vstup.")
+                            # Loop will repeat player's turn due to no turn change and continue below might be better
+                            continue 
 
-                    if rvacka_zivoty_jirasek <= 0 or rvacka_zivoty_hrac <= 0:
-                        rvacka = False
+                        # Check for fight end after player's action
+                        if rvacka_zivoty_jirasek <= 0 or rvacka_zivoty_hrac <= 0:
+                            rvacka = False 
+                        
+                        if not rvacka: # If fight ended (by defeat or special outcome)
+                            continue # Go to the top of `while rvacka` which will now terminate
+
+                    # Jirasek's Turn
+                    if rvacka_tah_jirasek: # Removed health checks from here
+                        print("             RVAČKA S JIRÁSKEM")
+                        print("-----------------------------------------")
+                        print(f"Tvoje životy - {rvacka_zivoty_hrac}")
+                        print(f"Jiráskovy životy - {rvacka_zivoty_jirasek}")
+                        print("-----------------------------------------")
+                        print("             Útočí Jirásek!     ")
+                        print("-----------------------------------------")
+                        
+                        if sance(0.5): # Píšťalka attack
+                            print("Jirásek vytáhl svoji píšťalku! Zacpal si uši a je připraven k písknutí!")
+                            print("-----------------------------------------")
+                            print("1. Taky si zacpat uši a doufat")
+                            print("2. Spustit Šalom Chaverim a pokusit se ho překřičet")
+                            print("-----------------------------------------")
+                            jirasek_utok_pistalka_vstup = input(">")
+                            print("-----------------------------------------")
+                            if jirasek_utok_pistalka_vstup == "1":
+                                if sance(0.5):
+                                    print("Perfektní. Útok jsi úplně odrazil.")
+                                else:
+                                    print("Doufal jsi zbytečně. Jiráska lze těžko přemoct v zacpávání uší.\n" \
+                                    "Přicházíš o tři životy.")
+                                    rvacka_zivoty_hrac -= 3
+                            elif jirasek_utok_pistalka_vstup == "2":
+                                if sance(0.25):
+                                    print("Fantastický nápad. Z ničeho nic se zjevila postava připomínající\n" \
+                                    "svou siluetou Sebastiana Skopového a po Židáskovi se málem slehla zem.\n" \
+                                    "Záhadná postava ti také za tvůj výkon přispěla 100 penězi.")
+                                    rvacka_zivoty_jirasek -= 7
+                                    zmen_penize(100)
+                                else:
+                                    print("To byl hodně stupidní nápad. Co sis myslel? Že se Židásek lekne?\n" \
+                                    "Přicházíš o 3 životy.")
+                                    rvacka_zivoty_hrac -= 3
+                            else:
+                                print("Neplatný vstup.") 
+                                # Jirásek still attacks or turn repeats? Original has no consequence for bad input here
+                                # For minimal change, assume turn passes or Jirásek 'misses' due to player confusion
+                        else: # Burgetová attack
+                            print("Židásek se rozhodl, že zavolá Burgetovou, ať se na to přijde podívat.\n" \
+                            "Únik před jejím smradem byl nevyhnutelný. Přicházíš o 2 životy." )
+                            rvacka_zivoty_hrac -= 2
+                        
+                        rvacka_tah_jirasek = False
+                        rvacka_tah_hrac = True
+
+                        # Check for fight end after Jirásek's action
+                        if rvacka_zivoty_jirasek <= 0 or rvacka_zivoty_hrac <= 0:
+                            rvacka = False
             
-            # This block executes after the 'while rvacka:' loop finishes or if 'hra' becomes False
-            if hra: # Only print outcomes and advance scene if game didn't end mid-fight
-                print("-----------------------------------------") 
-                if fight_outcome_special:
-                    # Message already printed
-                    pass 
-                elif rvacka_zivoty_hrac <= 0:
-                    print("Celou bitvu s Jiráskem jsi prohrál. Sice tě nechal až do rána spát,\n" \
-                    "nemohl jsi ovšem nic dělat s tím, že ti při jeho noční akci ukradl z pěněžěnky\n" \
-                    "200 peněz.")
-                    zmen_penize(-200)
-                elif rvacka_zivoty_jirasek <= 0: 
-                    print("Po tomto epickém souboji se ti podařilo Jiráskův útok odrazit. Odešel\n" \
-                    "naprosto zdrcený a ještě ti zaplatil 200 za cenu toho, že ho už mlátit\n" \
-                    "nebudeš. Následně jsi celou noc spal v pořádku.")
-                    zmen_penize(200)
-                
+            # This block executes after the 'while rvacka:' loop finishes
+            # The rvacka_tah_... assignments and rvacka=False from original outcome block are removed as they are redundant
+            
+            if odlakano_special_outcome:
+                print("Skvělá taktika. Židásek ti perfektně skočil na lep a po zbytek noci tě přestal\n" \
+                      "otravovat. Zbytek noci se ti spalo perfektně.")
+                # zmen_penize(-10) was already done when choice was made
                 scena += 1
-            # --- END OF FIXED FIGHT LOGIC ---
-            
+            elif rvacka_zivoty_hrac <=0:
+                print("Celou bitvu s Jiráskem jsi prohrál. Sice tě nechal až do rána spát,\n" \
+                "nemohl jsi ovšem nic dělat s tím, že ti při jeho noční akci ukradl z pěněžěnky\n" \
+                "200 peněz.")
+                zmen_penize(-200)
+                scena += 1
+            elif rvacka_zivoty_jirasek <=0: # This implies rvacka_zivoty_hrac > 0
+                print("Po tomto epickém souboji se ti podařilo Jiráskův útok odrazit. Odešel\n" \
+                "naprosto zdrcený a ještě ti zaplatil 200 za cenu toho, že ho už mlátit\n" \
+                "nebudeš. Následně jsi celou noc spal v pořádku.")
+                zmen_penize(200)
+                scena += 1
+            # --- END OF MINIMAL FIX FOR FIGHT ---
+                       
         elif scena == 8:
             print("osma scena")
-            print("Dorazil jsi do scény 8. Konec testu.")
-            hra = False
-        
-        if not hra: # If any scene logic sets hra to False (e.g. zmen_zivoty -> konec_hry)
-            continue # Skip to next iteration of outer while hra, which will then terminate
 
-    else: # Fallback for main menu input
-        if vstup != "3": # Option "3" is handled by konec_hry()
-            print("Neplatný vstup. Zvolte 1, 2 nebo 3.")
-
-if not hra: 
-    print("-----------------------------------------")
-    print("Hra byla ukončena.")
-    print("-----------------------------------------")
+    else:
+        print("Neplatný vstup.")
