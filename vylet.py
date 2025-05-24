@@ -10,10 +10,16 @@ penize = 200
 minimalni_penize = 0
 inventar = {"svačina": 1}
 cas = datetime.datetime.strptime("08:00", "%H:%M").time()
-scena = 5
+scena = 7
 hra = True
 tomkova_body = 0
 jirasek_zije = True
+# pocatecni hodnoty pro rvacku
+rvacka = True
+rvacka_zivoty_hrac = 10
+rvacka_zivoty_jirasek = 10
+rvacka_tah_hrac = True
+rvacka_tah_jirasek = False
 #pocatecni hodnoty pro obchod
 pocet_bonbonu = 0
 cena_bonbony = 60
@@ -134,8 +140,15 @@ def obchod():
 
 # dialog s koncem hry, druh konce asi podle boolean
 def konec_hry():
+    global hra
     print("teď to fakt psát nebudu")
     hra = False
+
+# generování šancí
+def sance(sance_zakladni):
+    global pocet_bonbonu
+    return random.random() <= sance_zakladni + pocet_bonbonu * 0.1
+
 
 
 
@@ -159,6 +172,7 @@ print("ale jen mezi scénami. Na začátek jsi od maminky")
 print("dostal svačinu, která ti přidá 2.5 životů. Během hry se ti")
 print("také bude nepravidelně zobrazovat obchod, ve kterém se převážně")
 print("kvůli Fialovi postupně zvyšují ceny.")
+print("-----------------------------------------")
 print("                    HODNĚ ŠTĚSTÍ")
 
 # hlavní smyčka
@@ -169,8 +183,6 @@ while hra:
     # prohrávající conditions
     if vstup == "3":
       hra = False
-    elif zivoty <= 0:
-        hra = False
 
     # interakce s inventářem
     elif vstup == "2":
@@ -285,8 +297,7 @@ while hra:
                     rozhodnuti_zidasek = input(">")
                     print("-----------------------------------------")
                     if rozhodnuti_zidasek == "1":
-                        zidasek_odehnani_random = random.randint(1,3)
-                        if zidasek_odehnani_random == 3:
+                        if sance(0.3):
                             print("Z nějakýho důvodu tohle zafungovalo. Utekl tak rychle, že mu z kapsy\n" \
                             "ještě vypadla dvacetikorunovka. Snad bude víc...")
                             zmen_penize(+20)
@@ -416,7 +427,172 @@ while hra:
             "by jsi nepřežil. ")
             scena += 1
         elif scena == 7:
-            
+            print("Probudil tě nepříliž výrazný zvuk kroků z chodby. Na tom by nebylo nic zvláštního, ale\n" \
+            "všiml sis, že jsou otevřené dveře tvého pokoje. To je sice zvláštní, ale zkusil jsi to ignorovat\n" \
+            "a dveře jsi zavřel. Když najednou, po prudkém zabouchnutí dveří, se ozvalo: 'Můžeš přestat mlátit\n" \
+            "těma dveřma? Ty zvuky jsou nepříjemné!'. No jasně, že tě to nenapadlo. Ten žid se tě pokusil okrást\n" \
+            "znova! Tentokrát už si to ale líbit nenecháš. Je třeba tomu hajzlovi domluvit, že tě má v noci nechat. ")
+            print("-----------------------------------------")
+            while rvacka:
+                    while rvacka_tah_hrac and rvacka_zivoty_hrac > 0 and rvacka_zivoty_jirasek > 0:
+                        print("            RVAČKA S JIRÁSKEM")
+                        print("-----------------------------------------")
+                        print(f"Tvoje životy - {rvacka_zivoty_hrac}")
+                        print(f"Jiráskovy životy - {rvacka_zivoty_jirasek}")
+                        print("-----------------------------------------")
+                        print("                Útočíš!")
+                        print("-----------------------------------------")
+                        print("1. Hodit po Jiráskovi ředkvičku")
+                        print("2. Přiškrtit Jiráska drátovou myší")
+                        print("3. Odlákat Jiráska desetikorunou")
+                        print("-----------------------------------------")
+                        rvacka_vstup = input(">")
+                        print("-----------------------------------------")
+                        if rvacka_vstup == "1":
+                            if sance(0.65):
+                                print("Výborná práce. Jirásek nestihl uhnout a dostal 3 poškození.")
+                                print("-----------------------------------------")
+                                rvacka_zivoty_jirasek -=3
+                                rvacka_tah_hrac = False
+                                rvacka_tah_jirasek = True
+                            else:
+                                print("To se moc nepovedlo. Netrefil jsi se, asi nemáš mušku z bridže.")
+                                print("-----------------------------------------")
+                                rvacka_tah_hrac = False
+                                rvacka_tah_jirasek = True
+                        elif rvacka_vstup == "2":
+                            if sance(0.3):
+                                print("Tohle byla skvělá technika. Jirásek se dusí a ztrácí 6 životů.\n" \
+                                "Ještě k tomu můžeš útočit znovu.")
+                                print("-----------------------------------------")
+                                rvacka_zivoty_jirasek -=6
+                            else:
+                                print("To se moc nepovedlo. Jirásek tě chytil za ruku a uštědřil ti 4 poškození.")
+                                print("-----------------------------------------")
+                                rvacka_zivoty_hrac -=4
+                                rvacka_tah_hrac = False
+                                rvacka_tah_jirasek = True
+                        elif rvacka_vstup == "3":
+                            if penize >=10:
+                                if sance(0.2):
+                                    print("Skvělá taktika. Židásek ti perfektně skočil na lep a po zbytek noci tě přestal\n" \
+                                    "otravovat. Zbytek noci se ti spalo perfektně.")
+                                    zmen_penize(-10)
+                                    rvacka = False
+                                    rvacka_tah_jirasek = False
+                                    rvacka_tah_hrac = False
+                                    scena += 1
+                                else:
+                                    print("Tohle bylo úplně k ničemu. Pod vlivem adrenalinu asi Židáska\n" \
+                                    "peníze tolik nezajímají.")
+                                    print("-----------------------------------------")
+                                    zmen_penize(-10)
+                                    rvacka_tah_hrac = False
+                                    rvacka_tah_jirasek = True
+                            else:
+                                print("Ještě, kdyby jsi tu desetikorunu měl. Takhle ho sotva odlákáš.")
+                        else:
+                            print("Neplatný vstup.")
+                    while rvacka_tah_jirasek and rvacka_zivoty_hrac > 0 and rvacka_zivoty_jirasek > 0:               
+                        print("             RVAČKA S JIRÁSKEM")
+                        print("-----------------------------------------")
+                        print(f"Tvoje životy - {rvacka_zivoty_hrac}")
+                        print(f"Jiráskovy životy - {rvacka_zivoty_jirasek}")
+                        print("-----------------------------------------")
+                        print("             Útočí Jirásek!     ")
+                        print("-----------------------------------------")
+                        if sance(0.5):
+                            print("Jirásek vytáhl svoji píšťalku! Zacpal si uši a je připraven k písknutí!")
+                            print("-----------------------------------------")
+                            print("1. Taky si zacpat uši a doufat")
+                            print("2. Spustit Šalom Chaverim a pokusit se ho překřičet")
+                            print("-----------------------------------------")
+                            jirasek_utok_pistalka_vstup = input(">")
+                            print("-----------------------------------------")
+                            if jirasek_utok_pistalka_vstup == "1":
+                                if sance(0.5):
+                                    print("Perfektní. Útok jsi úplně odrazil.")
+                                    print("-----------------------------------------")
+                                    rvacka_tah_jirasek = False
+                                    rvacka_tah_hrac = True
+                                else:
+                                    print("Doufal jsi zbytečně. Jiráska lze těžko přemoct v zacpávání uší.\n" \
+                                    "Přicházíš o tři životy.")
+                                    rvacka_zivoty_hrac -= 3
+                                    if rvacka_zivoty_hrac > 0:
+                                        rvacka_tah_jirasek = False
+                                        rvacka_tah_hrac = True
+                            elif jirasek_utok_pistalka_vstup == "2":
+                                if sance(0.25):
+                                    print("Fantastický nápad. Z ničeho nic se zjevila postava připomínající\n" \
+                                    "svou siluetou Sebastiana Skopového a po Židáskovi se málem slehla zem.\n" \
+                                    "Záhadná postava ti také za tvůj výkon přispěla 100 penězi.")
+                                    print("-----------------------------------------")
+                                    rvacka_zivoty_jirasek -= 7
+                                    if rvacka_zivoty_jirasek > 0:
+                                        rvacka_tah_jirasek = False
+                                        rvacka_tah_hrac = True
+                                    zmen_penize(100)
+
+                                else:
+                                    print("To byl hodně stupidní nápad. Co sis myslel? Že se Židásek lekne?\n" \
+                                    "Přicházíš o 3 životy.")
+                                    rvacka_zivoty_hrac -= 3
+                                    if rvacka_zivoty_hrac > 0:
+                                        rvacka_tah_jirasek = False
+                                        rvacka_tah_hrac = True
+                            else:
+                                print("Neplatný vstup.")
+                        else:
+                            print("Židásek se rozhodl, že zavolá Burgetovou, ať se na to přijde podívat.\n" \
+                            "Únik před jejím smradem byl nevyhnutelný. Přicházíš o 2 životy." )
+                            print("-----------------------------------------")
+                            rvacka_zivoty_hrac -= 2
+                            if rvacka_zivoty_hrac > 0:
+                                rvacka_tah_jirasek = False
+                                rvacka_tah_hrac = True
+            if rvacka_zivoty_hrac <=0:
+                print("Celou bitvu s Jiráskem jsi prohrál. Sice tě nechal až do rána spát,\n" \
+                "nemohl jsi ovšem nic dělat s tím, že ti při jeho noční akci ukradl z pěněžěnky\n" \
+                "200 peněz.")
+                rvacka = False
+                rvacka_tah_hrac = False
+                rvacka_tah_jirasek = False
+                zmen_penize(-200)
+                scena += 1
+            elif rvacka_zivoty_jirasek <=0:
+                print("Po tomto epickém souboji se ti podařilo Jiráskův útok odrazit. Odešel\n" \
+                "naprosto zdrcený a ještě ti zaplatil 200 za cenu toho, že ho už mlátit\n" \
+                "nebudeš. Následně jsi celou noc spal v pořádku.")
+                rvacka = False
+                rvacka_tah_jirasek = False
+                rvacka_tah_hrac = False
+                zmen_penize(200)
+                scena += 1       
+        elif scena == 8:
+            print("osma scena")
+
+
+
+
+                        
+                        
+
+                                
+                        
+                        
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

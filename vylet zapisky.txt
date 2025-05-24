@@ -19,23 +19,30 @@ Obchod: do pribehu prubezne (mozna treba kazde rano)
 
 
 
-mozna zakomponovat cas? Treba otviraci doby
-    nebo ze akce budou nejakej cas trvat, ze treba jen abys nakoupil 
-    tak to bude trvat 20 minut treba, takze je omezenej pocet dobrovolnejch akci za den treba
 
 
 Pribeh:
         prvni den - Na vylet do usti nad labem jedes ty, tomkova, burgetova a slacik, protoze vsichni ostatni zustali doma
         prvni noc - zidasek 
-druhy den
-    rano - tomkova posle pro snidani
-        nesplneho -Zivoty
-        plneno - daruje ti sve srdce
-    zustavas cely den na hotelu, tomkova ti dava ukoly, 
+        druhy den
+            rano - tomkova posle pro snidani
+                nesplneho -Zivoty
+                plneno - daruje ti sve srdce
+            zustavas cely den na hotelu, tomkova ti dava ukoly, 
 druha noc - znova zidasek, ale jiny problem
 treti den - chemicka, neco alkohol a slacik, vymyslet quest a item
 treti noc - znova zidasek, jiny problem
 ctvrty den - mesto, ukradnute Klice, den burgetove, vymyslet quest a item
 ctvrta noc - znova zidasek, jiny problem, moznost postrelit
 paty den - konec, klice jako win condition
+
+
+
+Pridat po dodelani hry:
+    #1 - cas
+            mozna zakomponovat cas? Treba otviraci doby
+        nebo ze akce budou nejakej cas trvat, ze treba jen abys nakoupil 
+        tak to bude trvat 20 minut treba, takze je omezenej pocet dobrovolnejch akci za den treba
+    #2 - Charisma, postavy
+        
 
