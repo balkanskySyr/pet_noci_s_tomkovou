@@ -10,7 +10,7 @@ penize = 200
 minimalni_penize = 0
 inventar = {"svačina": 1}
 cas = datetime.datetime.strptime("08:00", "%H:%M").time()
-scena = 7
+scena = 8
 hra = True
 tomkova_body = 0
 jirasek_zije = True
@@ -25,6 +25,15 @@ pocet_bonbonu = 0
 cena_bonbony = 60
 cena_premium_toasty = 80
 cena_zbran = 500
+
+# pocatecni hodnoty pro toluen
+toluen_splneno = False
+toluen_nalezen = False
+toluen_menu = True
+toluen_sklad_vstup = "tomková je kráva"
+toluen_sklad_prozkomano = False
+toluen_laborator_prozkoumano = False
+toluen_centrum_prozkoumano = False
 
 # definice vsech potrebnych itemu
 krabicove_vino = "krabicové víno"
@@ -150,6 +159,10 @@ def sance(sance_zakladni):
     global pocet_bonbonu
     return random.random() <= sance_zakladni + pocet_bonbonu * 0.1
 
+# generování negativních šancí bez vlivu bonbónů
+def sance(sance_negativni):
+    return random.random() <= sance_negativni
+
 
 # úvodní scéna s krátkým tutoriálem mimo hlavní smyčku
 print()
@@ -236,11 +249,7 @@ while hra:
             rozhodnuti_0 = input(">")
             print("-----------------------------------------")
             if rozhodnuti_0 == "1":
-                print("Slačík s tebou soucítí a proto ti předal jeho cenné krabicové\n"
-                "víno poznání, má ho totiž ještě do zásoby spoustu. Tímto vínem se dokážeš\n"
-                "opít tak efektivně, že když se tě někdo bude dožadovat nějaké znalostní otázky,\n"
-                " budeš vždycky vědět správnou odpověď. Taky ti dal dvacku ze své peněženky.\n")
-                zmen_item(krabicove_vino, +1)
+                print("Slačík s tebou soucítí a proto ti dal dvacku ze své peněženky.\n")
                 zmen_penize(20)
             elif rozhodnuti_0 == "2":
                 if "svačina" in inventar:
@@ -554,7 +563,151 @@ while hra:
                 scena += 1
                        
         elif scena == 8:
-            print("osma scena")
+            print("Programu pro druhý den se ujal Slačík. Bude to program zábavný - podíváte se totiž\n" \
+            "na místo, co Ústí jako město definuje - do chemičky. Aby se neřeklo, Slačík ti dal možnost se\n" \
+            "na expedici řádně připravit.")
+            print("-----------------------------------------")
+            print("1. Zajít do obchodu")
+            print("2. Pokračovat na výlet")
+            print("-----------------------------------------")
+            rozhodnuti_8 = input(">")
+            print("-----------------------------------------")
+            if rozhodnuti_8 == "1":
+                obchod()
+                scena += 1
+            elif rozhodnuti_8 == "2":
+                scena += 1
+            else:
+                print("Neplatný vstup.")
+        elif scena == 9:
+            print("Původně ti sice nebylo úplně jasné, proč tě Slačík vzal zrovna tam, po chvilce se ale všechno hned vysvětlilo.\n" \
+            "Slačík od tebe celou dobu potřebuje jednu věc. Přestal ho totiž bavit alkohol a tak chce, abys mu sehnal silnější\n" \
+            "materiál - Toluen. Odměna tě prý nemine. Tomková s Burgetovou se zase někde loudají, takže by ti také neměly překážet.")
+            print("-----------------------------------------")
+            while not toluen_splneno:
+                while toluen_menu:
+                    print("-----------------------------------------")
+                    print("             HLEDÁNÍ TOLUENU")
+                    print("-----------------------------------------")
+                    if not toluen_sklad_prozkomano:
+                        if toluen_sklad_vstup == "2":
+                            print("1. Vrátit se do skladu")
+                        else:
+                            print("1. Zkusit se po toluenu podívat ve skladě")
+                    if not toluen_laborator_prozkoumano:
+                        print("2. Zkusit toluen najít v chemické laboratoři")
+                    if not toluen_centrum_prozkoumano:
+                        print("3. Zkusit toluen najít v řídícím centru ")
+                    print("-----------------------------------------")
+                    toluen_vstup = input(">")
+                    print("-----------------------------------------")
+                    toluen_menu = False
+                if toluen_vstup == "1" and toluen_sklad_prozkomano == False:
+                    print("Ve výrobně jsi našel podezřelou nestřeženou láhev. Mohl by to být Slačíkův toluen. ")
+                    print("-----------------------------------------")
+                    print("1. Zkusit si přičichnout")
+                    print("2. Nechat ji být a jít dál")
+                    print("-----------------------------------------")
+                    toluen_sklad_vstup = input(">")
+                    print("-----------------------------------------")
+                    if toluen_sklad_vstup == "1":
+                        if sance(0.65):
+                            print("To nebude ono. Musíš hledat dál.")
+                            toluen_sklad_prozkomano = True
+                            toluen_menu = True
+                        else:
+                            print("To byl samozřejmě špatný nápad. Ztratil jsi vědomí a díky bohu jsi vyvázl\n" \
+                            "zpátky za Slačíkem živý, ale bez toluenu. Asi nebude nadšený.")
+                            zmen_zivoty(-3)
+                            toluen_nalezen = False
+                            toluen_splneno = True
+                    elif toluen_sklad_vstup == "2":
+                        toluen_menu = True
+                    else:
+                        print("Neplatný vstup.")
+                elif toluen_vstup == "2":
+                    print("V chemické laboratoři se zaučují noví pracovníci. U stolu stojí nepříjemně vypadající\n" \
+                    "postarší žena, která drží láhev s etiketou, na které je napsáno velkými písmeny 'TOLUEN'. ")
+                    print("-----------------------------------------")
+                    print("1. Zkusit ji přemluvit")
+                    print("2. Nenápadně toluen ukrást")
+                    print("-----------------------------------------")
+                    toluen_laborator_vstup = input(">")
+                    print("-----------------------------------------")
+                    if toluen_laborator_vstup == "1":
+                        print("Tato dáma je ochotná ti dát toluen pod podmínkou, že správně odpovíš na následující otázku:\n" \
+                        "Kdybys toluen náhodou ztratil, co s tím uděláš?")
+                        print("-----------------------------------------")
+                        print("1. Nafotíš ho a pošleš ho ředitelovi chemičky, aby veděl, co má hledat")
+                        print("2. Zkusíš ho hledat")
+                        print("-----------------------------------------")
+                        toluen_laborator_premlouvani_vstup = input(">")
+                        print("-----------------------------------------")
+                        if toluen_laborator_premlouvani_vstup == "1":
+                            print("Výborně. Získal jsi toluen a můžeš se vrátit za Slačíkem.")
+                            toluen_nalezen = True
+                            toluen_splneno = True
+                        elif toluen_laborator_premlouvani_vstup == "2":
+                            if sance(0.35):
+                                print("Odpověděl jsi špatně na otázku, podařilo se ti však toluen ukrást.\n" \
+                                "Získal jsi toluen a můžeš se vrátit za Slačíkem.")
+                            else: 
+                                print("To je samozřejmě špatná odpověď. Za Slačíkem jsi odešel bez toluenu a ta\n" \
+                                "konverzace ze slečnou ti také moc neprospěla.")
+                                zmen_zivoty(-3)
+                                toluen_nalezen = False
+                                toluen_splneno = True
+                    elif toluen_laborator_vstup == "2":
+                        if sance (0.35):
+                            print("Toluen jsi úspěšně ukradl. Ta pomatená zrzka nic netuší a ty se můžeš vrátit za Slačíkem.")
+                            toluen_nalezen = True
+                            toluen_splneno = True
+                        else:
+                            print("To je samozřejmě špatný nápad. Za Slačíkem jsi odešel bez toluenu a ta\n" \
+                                "konverzace ze slečnou ti také moc neprospěla.")
+                            zmen_zivoty(-3)
+                            toluen_nalezen = False
+                            toluen_splneno = True
+                    else:
+                        print("Neplatný vstup.")
+                elif toluen_vstup == "3" and toluen_centrum_prozkoumano == False: 
+                    print("V řídícím centru chemičky jsi sice nanšel nic zajímavého, pomohli ti však místní správci.\n" \
+                    "Prý viděli něco, co hledáš v chemické laboratoři a do výrobní haly nemá smysl se vydávat.")
+                    toluen_centrum_prozkoumano = True
+                    toluen_menu = True
+                else:
+                    print("Neplatný vstup.")
+                    toluen_menu = True      
+            if toluen_nalezen:
+                print("Fantasická práce. Slačík byl nadšený, že možná zbytek výletu přežije.\n" \
+                    "Jako odměnu ti dal 200 korun a taky jeho speciální víno poznání. To ti\n" \
+                    "pomůže, pokud budeš cítit nebezpečí a přeskočí následující scénu.\n")
+                zmen_item(krabicove_vino, +1)
+                zmen_penize(200)
+                scena += 1
+            else:
+                print("Slačík je z tvého výkonu zklamaný. Nepřinesl jsi toluen a Slačík ti za to dal facku.")
+                zmen_zivoty(-3)
+                scena += 1
+        elif scena == 10:
+            print("desata scena")
+                        
+
+                        
+
+
+
+
+
+                 
+    
+
+
+                    
+
+
+
+
 
     else:
         print("Neplatný vstup.")
